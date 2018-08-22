@@ -13,22 +13,22 @@ class DB
     end
 
     begin
-      json_data = JSON.parse(IO.read(file_path))
+      parse_data(IO.readlines(file_path))
     rescue
-      raise ArgumentError.new("JSON data is malformed")
+      raise ArgumentError.new("Bad data format")
     end
 
-    index_data(json_data)
+    index_data
   end
 
   # gets the entire data set
   def get_all
-
+    @data
   end
 
   # gets a fraction of it
   def get(qty = -1)
-
+    @data[0..qty - 1]
   end
 
   # gets by a defined selector
@@ -42,8 +42,13 @@ class DB
 
   private
 
-  def index_data(data)
+  def parse_data(lines)
+    @data = []
+    lines.map { |line| @data.push(JSON.parse(line, symbolize_names: true)) }
+  end
 
+  def index_data
+    # no need to index the data by a field right now
     @ready = true
   end
 end
