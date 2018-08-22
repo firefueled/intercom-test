@@ -2,4 +2,11 @@
 source "https://rubygems.org"
 
 gem "rake"
-gem "rspec"
+
+group :test do
+  gem "rspec"
+end
+
+group :development, :test do
+  gem "byebug"
+end
