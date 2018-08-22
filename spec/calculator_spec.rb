@@ -2,27 +2,30 @@ require 'calculator'
 
 RSpec.describe Calculator do
   before(:example) do
-    data = [
+    @data = [
+      # 352 Kms out bearing 97deg
       {
-        latitude: "52.986375",
+        latitude: "52.84101684721",
         user_id: 12,
         name: "Christina McArdle",
-        longitude: "-6.043701"
+        longitude: "-1.06811365826"
       },
+      # 4.5 Kms out bearing 17deg
       {
-        latitude: "51.92893",
+        latitude: "53.37894446001",
         user_id: 1,
         name: "Alice Cahill",
-        longitude: "-10.27699"
+        longitude: "-6.23740995419"
       },
+      # 95 Kms out bearing 29deg
       {
-        latitude: "51.8856167",
+        latitude: "54.08349035189",
         user_id: 2,
         name: "Ian McArdle",
-        longitude: "-10.4240951"
+        longitude: "-5.5526349267"
       }
     ]
-    @db = double("mock db instance", get_all: data, ready?: false)
+    @db = double("mock db instance", get_all: @data, ready?: false)
   end
 
   context "#new" do
@@ -33,6 +36,20 @@ RSpec.describe Calculator do
 
     it "checks for db instance unreadyness" do
       expect { Calculator.new(@db) }.to raise_error(ArgumentError)
+    end
+  end
+
+  context "#customers_within" do
+    before(:example) do
+      allow(@db).to receive(:ready?) { true }
+    end
+
+    it "returns customers within 100Km" do
+      calc = Calculator.new(@db)
+      res = calc.customers_within
+      expect(res.length).to eq(2)
+      expect(@data[1..2].include?(res[0])).to be true
+      expect(@data[1..2].include?(res[1])).to be true
     end
   end
 end
