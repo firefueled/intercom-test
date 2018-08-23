@@ -3,19 +3,15 @@ require 'optionparser'
 require './lib/db'
 require './lib/calculator'
 
-Options = Struct.new(:name)
-
-class Parser
-  def self.parse(options)
+class SimpleCals
+  def parse(options)
     options = %w[--help] if options.empty?
-
-    args = Options.new("world")
 
     opt_parser = OptionParser.new do |opts|
       opts.banner = "Usage: simple_calcs.rb [options] [-f FILE_PATH] data"
 
       opts.on("-f", "--file FILE_PATH", "Path to a file containing input data") do |f|
-        options[:file_path] = f
+        read_and_calculate(f)
       end
 
       opts.on("-h", "--help", "Prints this help") do
@@ -25,8 +21,19 @@ class Parser
     end
 
     opt_parser.parse!(options)
-    return args
+  end
+
+  def read_and_calculate(file_path)
+    db = DB.new(file_path)
+    calculator = Calculator.new(db)
+    res = calculator.customers_within
+
+    puts "The customers around a 100Km radius are the following:"
+    res.map { |x| puts "User ID: #{x[:user_id]} - Name: #{x[:name]}" }
+
+    exit
   end
 end
 
-options = Parser.parse ARGV
+simple_calcs = SimpleCals.new
+options = simple_calcs.parse ARGV

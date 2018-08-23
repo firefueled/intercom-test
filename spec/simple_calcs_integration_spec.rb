@@ -24,11 +24,11 @@ RSpec.describe "SimpleCals" do
     end
 
     it "returns a result when given input as a file path" do
-      res = `./simple_calcs.rb -f customers.txt`
+      res = `./simple_calcs.rb -f spec/customers.txt`
       res_length = res.split("\n").length
       # the expected result is one line per customer plus one description line
       expect(res_length).to be >= @correct_results.length
-      expect(res_length).to be < @correct_results.length + 1
+      expect(res_length).to be <= @correct_results.length + 1
     end
   end
 end
