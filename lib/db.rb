@@ -5,17 +5,17 @@ class DB
 
   def initialize(file_path)
     if file_path.nil? or file_path.empty?
-      raise ArgumentError.new("No data source provided")
+      raise NoDataError.new("No data source provided")
     end
 
     unless File.readable?(file_path)
-      raise ArgumentError.new("File not found or unreadable")
+      raise FileInaccessibleError.new("File not found or unreadable")
     end
 
     begin
       parse_data(IO.readlines(file_path))
     rescue
-      raise ArgumentError.new("Bad data format")
+      raise BadDataFormatError.new("Bad data format")
     end
 
     index_data
@@ -51,4 +51,8 @@ class DB
     # no need to index the data by a field right now
     @ready = true
   end
+
+  class NoDataError < ArgumentError; end
+  class FileInaccessibleError < ArgumentError; end
+  class BadDataFormatError < ArgumentError; end
 end

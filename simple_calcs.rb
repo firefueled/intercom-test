@@ -3,6 +3,10 @@ require 'optionparser'
 require './lib/db'
 require './lib/calculator'
 
+ERR_MISSING_FILE_PATH = 1
+ERR_FILE_INACCESSIBLE = 2
+ERR_BAD_FILE_FORMAT = 3
+
 class SimpleCals
   def parse(options)
     options = %w[--help] if options.empty?
@@ -24,7 +28,18 @@ class SimpleCals
   end
 
   def read_and_calculate(file_path)
-    db = DB.new(file_path)
+    begin
+      db = DB.new(file_path)
+
+    rescue DB::FileInaccessibleError => e
+      puts 'Input file inaccessible. Please provide one with the -f option and make sure it\'s readable.'
+      exit ERR_FILE_INACCESSIBLE
+
+    rescue DB::BadDataFormatError => e
+      puts 'Input file has a broken format. The file should have a single JSON object per line.'
+      exit ERR_BAD_FILE_FORMAT
+    end
+
     calculator = Calculator.new(db)
     res = calculator.customers_within
 
@@ -36,4 +51,10 @@ class SimpleCals
 end
 
 simple_calcs = SimpleCals.new
-options = simple_calcs.parse ARGV
+
+begin
+  options = simple_calcs.parse ARGV
+rescue OptionParser::MissingArgument => e
+  puts 'No input file path provided. Please provide one with the -f option.'
+  exit ERR_MISSING_FILE_PATH
+end

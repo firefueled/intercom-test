@@ -36,11 +36,11 @@ RSpec.describe DB do
     end
 
     it "checks for inaccessible file" do
-      expect { DB.new('9876trfvbnmk.87tfvb') }.to raise_error(ArgumentError)
+      expect { DB.new('9876trfvbnmk.87tfvb') }.to raise_error(DB::FileInaccessibleError)
     end
 
     it "checks for bad data format" do
-      expect { DB.new('Gemfile') }.to raise_error(ArgumentError)
+      expect { DB.new('Gemfile') }.to raise_error(DB::BadDataFormatError)
     end
 
     it "becomes ready when valid data is loaded" do
@@ -51,20 +51,20 @@ RSpec.describe DB do
   end
 
   context "#get" do
-    it "can retrieve all data after loading it" do
+    it "can retrieve all data" do
       db = DB.new('customers.txt')
       res = db.get_all
-      expect(res.length).to be equal(@data.length)
-      expect(res.first).to be equal(@data.first)
-      expect(res.second).to be equal(@data.second)
-      expect(res.third).to be equal(@data.third)
+      expect(res.length).to eq(@data.length)
+      expect(res[0]).to eq(@data[0])
+      expect(res[1]).to eq(@data[1])
+      expect(res[2]).to eq(@data[2])
     end
 
-    it "can retrieve part of the data after loading it" do
+    it "can retrieve part of the data" do
       db = DB.new('customers.txt')
       res = db.get(1)
-      expect(res.length).to be equal(1)
-      expect(res.first).to be equal(@data.first)
+      expect(res.length).to eq(1)
+      expect(res[0]).to eq(@data[0])
     end
 
     after(:example) do
