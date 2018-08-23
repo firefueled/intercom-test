@@ -1,18 +1,17 @@
-require 'simple_calcs'
-
-RSpec.describe "setting up integration" do
-  before :all do
-  end
-end
-
-RSpec.describe "integration" do
-
-  describe SimpleCals do
-    subject(:result) do
+RSpec.describe "SimpleCals" do
+  context "#command line" do
+    it "doesn't crash and burn" do
+      `ruby simple_calcs.rb`
+      expect($?).to eq(0)
     end
-
-    it "just works" do
-      expect(true).to eq true
+    it "is bash-executable" do
+      `./simple_calcs.rb`
+      expect($?).to eq(0)
+    end
+    it "responds with a help message by default" do
+      res = `./simple_calcs.rb`
+      expect($?).to eq(0)
+      expect(res.start_with?('Usage: simple_calcs.rb')).to be true
     end
   end
 end

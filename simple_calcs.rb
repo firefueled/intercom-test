@@ -1,15 +1,32 @@
 #!/usr/bin/env ruby
 require 'optionparser'
-require './db'
-require './calculator'
+require './lib/db'
+require './lib/calculator'
 
-options = {}
-printers = Array.new
+Options = Struct.new(:name)
 
-OptionParser.new do |opts|
-  opts.banner = "Usage: simple_calcs [options] [[-f file_path] | [< piped_data]] file_path"
-  opts.on("-f", "--file FILE_PATH", "Path to a file containing the data to be used") do |f|
-    file_path = f
+class Parser
+  def self.parse(options)
+    options = %w[--help] if options.empty?
+
+    args = Options.new("world")
+
+    opt_parser = OptionParser.new do |opts|
+      opts.banner = "Usage: simple_calcs.rb [options] [-f FILE_PATH] data"
+
+      opts.on("-f", "--file FILE_PATH", "Path to a file containing input data") do |f|
+        options[:file_path] = f
+      end
+
+      opts.on("-h", "--help", "Prints this help") do
+        puts opts
+        exit
+      end
+    end
+
+    opt_parser.parse!(options)
+    return args
   end
-end.parse!
+end
 
+options = Parser.parse ARGV
