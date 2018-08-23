@@ -19,7 +19,8 @@ RSpec.describe "SimpleCals" do
 
   context "#calculation" do
     before(:example) do
-      @correct_results = JSON.parse(IO.read('./spec/customers_result.txt'), symbolize_names: true)
+      @correct_results =
+        JSON.parse(IO.read('./spec/customers_result.txt'), symbolize_names: true)
       @correct_results.sort! { |a, b| a[:user_id] <=> b[:user_id] }
     end
 
@@ -38,6 +39,26 @@ RSpec.describe "SimpleCals" do
         expect(res_lines[i + 1].start_with?("User ID: #{x[:user_id]}")).to be true
         expect(res_lines[i + 1].end_with?(x[:name])).to be true
       }
+    end
+  end
+
+  context "#error handling" do
+    context "#returns a friendly message" do
+      it "when no file was given" do
+        res = `./simple_calcs.rb -f`
+        expect($?).not_to eq(0)
+        expect(res).to eq 'No input file path provided. Please provide one with the -f option.'
+      end
+      it "when an inaccessible file was given" do
+        res = `./simple_calcs.rb -f not-a-file.rb.42`
+        expect($?).not_to eq(0)
+        expect(res).to eq 'Input file inaccessible. Please provide one with the -f option and make sure it\'s readable.'
+      end
+      it "when a file has a wrong format" do
+        res = `./simple_calcs.rb -f spec/customers_broken.txt`
+        expect($?).not_to eq(0)
+        expect(res).to eq 'Input file has a broken format. The file should have a single JSON object per line.'
+      end
     end
   end
 end
