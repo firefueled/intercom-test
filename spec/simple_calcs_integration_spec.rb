@@ -47,17 +47,19 @@ RSpec.describe "SimpleCals" do
       it "when no file was given" do
         res = `./simple_calcs.rb -f`
         expect($?).not_to eq(0)
-        expect(res).to eq 'No input file path provided. Please provide one with the -f option.'
+        expect(res.chop).to eq 'No input file path provided. Please provide one with the -f option.'
       end
+
       it "when an inaccessible file was given" do
         res = `./simple_calcs.rb -f not-a-file.rb.42`
         expect($?).not_to eq(0)
-        expect(res).to eq 'Input file inaccessible. Please provide one with the -f option and make sure it\'s readable.'
+        expect(res.chop).to eq 'Input file inaccessible. Please provide one with the -f option and make sure it\'s readable.'
       end
+
       it "when a file has a wrong format" do
         res = `./simple_calcs.rb -f spec/customers_broken.txt`
         expect($?).not_to eq(0)
-        expect(res).to eq 'Input file has a broken format. The file should have a single JSON object per line.'
+        expect(res.chop).to eq 'Input file has a broken format. The file should have a single JSON object per line.'
       end
     end
   end
