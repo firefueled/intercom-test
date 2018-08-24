@@ -5,11 +5,11 @@ require 'db'
 RSpec.describe DB do
   before(:example) do
     @data = [
-      {latitude: "52.986375", user_id: 12, name: "Christina McArdle", longitude: "-6.043701"},
-      {latitude: "51.92893", user_id: 1, name: "Alice Cahill", longitude: "-10.27699"},
-      {latitude: "51.8856167", user_id: 2, name: "Ian McArdle", longitude: "-10.4240951"},
-      {latitude: "52.366037", user_id: 16, name: "Ian Larkin", longitude: "-8.179118"},
-      {latitude: "54.180238", user_id: 17, name: "Patricia Cahill", longitude: "-5.920898"}
+      {latitude: 52.986375, user_id: 12, name: "Christina McArdle", longitude: -6.043701},
+      {latitude: 51.92893, user_id: 1, name: "Alice Cahill", longitude: -10.27699},
+      {latitude: 51.8856167, user_id: 2, name: "Ian McArdle", longitude: -10.4240951},
+      {latitude: 52.366037, user_id: 16, name: "Ian Larkin", longitude: -8.179118},
+      {latitude: 54.180238, user_id: 17, name: "Patricia Cahill", longitude: -5.920898}
     ]
     @text_data = @data.map { |x| JSON.dump(x) }
     IO.write('customers_test.txt', @text_data.join("\n"))

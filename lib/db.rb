@@ -46,8 +46,20 @@ class DB
     @data = []
     lines.map { |line|
       next if line.strip.length.zero?
-      @data.push(JSON.parse(line, symbolize_names: true))
+
+      line = JSON.parse(line, symbolize_names: true)
+      line[:latitude] = line[:latitude].to_f
+      line[:longitude] = line[:longitude].to_f
+
+      next if out_of_range_coords?(line)
+      @data << line
     }
+  end
+
+  def out_of_range_coords?(hash)
+    return true if hash[:latitude] > 90 or hash[:latitude] < -90
+    return true if hash[:longitude] > 180 or hash[:longitude] < -180
+    false
   end
 
   def index_data
