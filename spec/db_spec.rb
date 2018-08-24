@@ -95,6 +95,44 @@ RSpec.describe DB do
 
       File.delete('input_test.txt')
     end
+
+    it "discards customers with empty fields" do
+      data = @data
+      data[1][:longitude] = nil
+      data[2][:name] = ""
+      data[3][:latitude] = nil
+      data[4][:user_id] = nil
+
+      text_data = data.map { |x| JSON.dump(x) }
+      IO.write('input_test.txt', text_data.join("\n"))
+
+      db = DB.new('input_test.txt')
+      res = db.get_all
+
+      expect(res.length).to be 1
+      expect(res[0][:user_id]).to eq data[0][:user_id]
+
+      File.delete('input_test.txt')
+    end
+
+    it "discards customers with missing fields" do
+      data = @data
+      data[1].delete(:longitude)
+      data[2].delete(:name)
+      data[3].delete(:latitude)
+      data[4].delete(:user_id)
+
+      text_data = data.map { |x| JSON.dump(x) }
+      IO.write('input_test.txt', text_data.join("\n"))
+
+      db = DB.new('input_test.txt')
+      res = db.get_all
+
+      expect(res.length).to be 1
+      expect(res[0][:user_id]).to eq data[0][:user_id]
+
+      File.delete('input_test.txt')
+    end
   end
 
   after(:example) do
