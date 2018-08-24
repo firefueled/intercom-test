@@ -154,6 +154,26 @@ RSpec.describe DB do
     end
   end
 
+    it "discards customers with repeating user ids" do
+      data = @data
+      data[1][:user_id] = data[0][:user_id]
+      data[2][:user_id] = data[0][:user_id]
+      data[3][:user_id] = data[0][:user_id]
+      data[4][:user_id] = data[0][:user_id]
+
+      text_data = data.map { |x| JSON.dump(x) }
+      IO.write('input_test.txt', text_data.join("\n"))
+
+      db = DB.new('input_test.txt')
+      res = db.get_all
+
+      expect(res.length).to be 1
+      expect(res[0][:user_id]).to eq data[0][:user_id]
+
+      File.delete('input_test.txt')
+    end
+  end
+
   after(:example) do
     File.delete('customers_test.txt')
   end
