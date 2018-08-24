@@ -9,8 +9,8 @@ RSpec.describe DB do
       {latitude: "51.92893", user_id: 1, name: "Alice Cahill", longitude: "-10.27699"},
       {latitude: "51.8856167", user_id: 2, name: "Ian McArdle", longitude: "-10.4240951"}
     ]
-    txt_data = @data.map { |x| JSON.dump(x) }
-    IO.write('customers_test.txt', txt_data.join("\n"))
+    @text_data = @data.map { |x| JSON.dump(x) }
+    IO.write('customers_test.txt', @text_data.join("\n"))
   end
 
   context "#new" do
@@ -54,19 +54,12 @@ RSpec.describe DB do
 
   context "#handle problematic input" do
     it "ignores white spaces" do
-      data = [
-        {latitude: "52.986375", user_id: 12, name: "Christina McArdle", longitude: "-6.043701"},
-        {latitude: "51.92893", user_id: 1, name: "Alice Cahill", longitude: "-10.27699"},
-        {latitude: "51.8856167", user_id: 2, name: "Ian McArdle", longitude: "-10.4240951"}
-      ]
-      data.map! { |x| JSON.dump(x) }
-
       File.open('input_test.txt', 'w') do |file|
         file.write("\t      \n")
 
-        file.write("#{data[0]}\n")
-        file.write("#{data[1]}    \n")
-        file.write("    #{data[2]}\n")
+        file.write("#{@text_data[0]}\n")
+        file.write("#{@text_data[1]}    \n")
+        file.write("    #{@text_data[2]}\n")
 
         file.write("   \t\n")
       end
@@ -75,9 +68,9 @@ RSpec.describe DB do
       res = db.get_all
 
       expect(res.length).to be 3
-      expect(res[0][:user_id]).to eq data[0][:user_id]
-      expect(res[1][:user_id]).to eq data[1][:user_id]
-      expect(res[2][:user_id]).to eq data[2][:user_id]
+      expect(res[0][:user_id]).to eq @data[0][:user_id]
+      expect(res[1][:user_id]).to eq @data[1][:user_id]
+      expect(res[2][:user_id]).to eq @data[2][:user_id]
 
       File.delete('input_test.txt')
     end

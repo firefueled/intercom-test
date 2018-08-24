@@ -44,7 +44,10 @@ class DB
 
   def parse_data(lines)
     @data = []
-    lines.map { |line| @data.push(JSON.parse(line, symbolize_names: true)) }
+    lines.map { |line|
+      next if line.strip.length.zero?
+      @data.push(JSON.parse(line, symbolize_names: true))
+    }
   end
 
   def index_data
