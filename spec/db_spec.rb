@@ -98,8 +98,27 @@ RSpec.describe DB do
 
     it "discards customers with empty fields" do
       data = @data
-      data[1][:longitude] = nil
+      data[1][:longitude] = ""
       data[2][:name] = ""
+      data[3][:latitude] = ""
+      data[4][:user_id] = ""
+
+      text_data = data.map { |x| JSON.dump(x) }
+      IO.write('input_test.txt', text_data.join("\n"))
+
+      db = DB.new('input_test.txt')
+      res = db.get_all
+
+      expect(res.length).to be 1
+      expect(res[0][:user_id]).to eq data[0][:user_id]
+
+      File.delete('input_test.txt')
+    end
+
+    it "discards customers with null fields" do
+      data = @data
+      data[1][:longitude] = nil
+      data[2][:name] = nil
       data[3][:latitude] = nil
       data[4][:user_id] = nil
 

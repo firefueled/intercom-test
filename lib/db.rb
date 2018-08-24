@@ -46,14 +46,26 @@ class DB
     @data = []
     lines.map { |line|
       next if line.strip.length.zero?
-
       line = JSON.parse(line, symbolize_names: true)
+
+      next if any_empty_fields?(line)
+
       line[:latitude] = line[:latitude].to_f
       line[:longitude] = line[:longitude].to_f
 
       next if out_of_range_coords?(line)
       @data << line
     }
+  end
+
+  def any_empty_fields?(hash)
+    return true if
+      hash[:user_id].nil? or
+      hash[:latitude].nil? or
+      hash[:longitude].nil? or
+      hash[:name].nil?
+
+    hash.any? { |k, v| String(v).empty? }
   end
 
   def out_of_range_coords?(hash)
