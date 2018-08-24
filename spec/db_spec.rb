@@ -152,7 +152,6 @@ RSpec.describe DB do
 
       File.delete('input_test.txt')
     end
-  end
 
     it "discards customers with repeating user ids" do
       data = @data

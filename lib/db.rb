@@ -18,7 +18,7 @@ class DB
       raise BadDataFormatError.new("Bad data format")
     end
 
-    index_data
+    @ready = true
   end
 
   # gets the entire data set
@@ -43,18 +43,23 @@ class DB
   private
 
   def parse_data(lines)
+    @index = {}
     @data = []
+
     lines.map { |line|
       next if line.strip.length.zero?
-      line = JSON.parse(line, symbolize_names: true)
+      hash = JSON.parse(line, symbolize_names: true)
 
-      next if any_empty_fields?(line)
+      next if any_empty_fields?(hash)
+      next if @index.has_key?(hash[:user_id])
 
-      line[:latitude] = line[:latitude].to_f
-      line[:longitude] = line[:longitude].to_f
+      hash[:latitude] = hash[:latitude].to_f
+      hash[:longitude] = hash[:longitude].to_f
 
-      next if out_of_range_coords?(line)
-      @data << line
+      next if out_of_range_coords?(hash)
+
+      @data << hash
+      @index[hash[:user_id]] = @data.length - 1
     }
   end
 
@@ -72,11 +77,6 @@ class DB
     return true if hash[:latitude] > 90 or hash[:latitude] < -90
     return true if hash[:longitude] > 180 or hash[:longitude] < -180
     false
-  end
-
-  def index_data
-    # no need to index the data by a field right now
-    @ready = true
   end
 
   class NoDataError < ArgumentError; end
