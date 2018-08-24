@@ -6,12 +6,12 @@ RSpec.describe "SimpleCals" do
       `ruby simple_calcs.rb`
       expect($?).to eq(0)
     end
-    it "is bash-executable" do
-      `./simple_calcs.rb`
-      expect($?).to eq(0)
-    end
+    # it "is bash-executable" do
+    #   `ruby simple_calcs.rb`
+    #   expect($?).to eq(0)
+    # end
     it "responds with a help message by default" do
-      res = `./simple_calcs.rb`
+      res = `ruby simple_calcs.rb`
       expect($?).to eq(0)
       expect(res.start_with?('Usage: simple_calcs.rb')).to be true
     end
@@ -25,7 +25,7 @@ RSpec.describe "SimpleCals" do
     end
 
     it "returns a correct result when given the example input file" do
-      res = `./simple_calcs.rb -f spec/customers.txt`
+      res = `ruby simple_calcs.rb -f spec/customers.txt`
       res_lines = res.split("\n")
       expect($?).to eq(0)
 
@@ -45,19 +45,19 @@ RSpec.describe "SimpleCals" do
   context "#error handling" do
     context "#returns a friendly message" do
       it "when no file was given" do
-        res = `./simple_calcs.rb -f`
+        res = `ruby simple_calcs.rb -f`
         expect($?).not_to eq(0)
         expect(res.chop).to eq 'No input file path provided. Please provide one with the -f option.'
       end
 
       it "when an inaccessible file was given" do
-        res = `./simple_calcs.rb -f not-a-file.rb.42`
+        res = `ruby simple_calcs.rb -f not-a-file.rb.42`
         expect($?).not_to eq(0)
         expect(res.chop).to eq 'Input file inaccessible. Please provide one with the -f option and make sure it\'s readable.'
       end
 
       it "when a file has a wrong format" do
-        res = `./simple_calcs.rb -f spec/customers_broken.txt`
+        res = `ruby simple_calcs.rb -f spec/customers_broken.txt`
         expect($?).not_to eq(0)
         expect(res.chop).to eq 'Input file has a broken format. The file should have a single JSON object per line.'
       end

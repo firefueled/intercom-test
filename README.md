@@ -27,3 +27,9 @@ Give it execution permissions to use it as bash script
 `./simple_calcs.rb -f spec/customers.txt`
 
 `-h` flag prints out a help text
+
+## Tests
+
+Run tests with
+
+`rspec`
